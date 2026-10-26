@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="phone">
+    <h1>Sign up</h1>
+    <p id="tagline">Make your free account</p>
+
+    <form id="signup-form" novalidate>
+      <label for="name">Name</label>
+      <input type="text" id="name" autocomplete="nickname" maxlength="30">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" autocomplete="email">
+
+      <label for="birthday">Date of birth</label>
+      <input type="date" id="birthday" autocomplete="bday">
+
+      <label for="password">Password (6+ characters)</label>
+      <input type="password" id="password" autocomplete="new-password">
+
+      <label for="confirm">Confirm password</label>
+      <input type="password" id="confirm" autocomplete="new-password">
+
+      <p id="message" role="alert"></p>
+
+      <button type="submit" class="btn">Create account</button>
+    </form>
+
+    <p class="small-text">Already have an account? <a href="login.html">Login</a></p>
+    <p class="small-text"><a href="index.html">Back to start</a></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

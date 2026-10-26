@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="phone">
+    <h1>Calculator</h1>
+    <p id="tagline">See how your money could grow</p>
+
+    <form id="calc-form" novalidate>
+      <label for="start">Starting amount ($)</label>
+      <input type="number" id="start" min="0" step="any" value="100" inputmode="decimal">
+
+      <label for="monthly">Add each month ($)</label>
+      <input type="number" id="monthly" min="0" step="any" value="25" inputmode="decimal">
+
+      <label for="rate">Yearly return (%)</label>
+      <input type="number" id="rate" min="0" max="30" step="any" value="7" inputmode="decimal">
+
+      <label for="years">Years</label>
+      <input type="number" id="years" min="1" max="60" step="1" value="10" inputmode="numeric">
+
+      <p id="message" role="alert"></p>
+
+      <button type="submit" class="btn btn-green">Calculate</button>
+    </form>
+
+    <div id="result" class="content" hidden>
+      <p>Total after the time is up: <strong id="result-total"></strong></p>
+      <p>Money you put in: <strong id="result-put-in"></strong></p>
+      <p>Growth: <strong id="result-growth"></strong></p>
+      <p class="small-text">This is only an example. Real investments go up and down and are never guaranteed.</p>
+    </div>
+
+    <p class="small-text"><a href="home.html">Back to lessons</a></p>
+  </div>
+
+  <script src="lessons.js"></script>
+  <script src="learn.js"></script>
+</body>
+</html>

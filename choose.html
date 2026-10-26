@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose a Topic - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .icon-row {
+      display: flex;
+      gap: 14px;
+      margin: 20px 30px;
+    }
+
+    .icon-choice {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-sizing: border-box;
+      min-height: 170px;
+      padding: 16px 8px;
+      border: 3px solid gray;
+      border-radius: 20px;
+      background-color: white;
+      color: black;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .icon-choice:hover {
+      background-color: honeydew;
+      border-color: green;
+    }
+
+    .icon-choice:focus-visible {
+      outline: 3px solid royalblue;
+      outline-offset: 2px;
+    }
+
+    .icon-choice.current {
+      border-color: green;
+    }
+
+    .icon-choice img.big-icon {
+      display: block;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .icon-choice .label {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .icon-choice .hint {
+      font-size: 13px;
+      color: dimgray;
+    }
+  </style>
+</head>
+<body>
+  <div id="phone">
+    <h1>Hi, <span id="welcome-name"></span>!</h1>
+    <p id="tagline">What do you want to learn about?</p>
+
+    <div class="icon-row">
+      <button type="button" class="icon-choice" data-track="stocks">
+        <img src="chartlogo.png" alt="" class="big-icon">
+        <span class="label">Stocks</span>
+        <span class="hint">Own a piece of a company</span>
+      </button>
+
+      <button type="button" class="icon-choice" data-track="commodities">
+        <img src="gold.png" alt="" class="big-icon">
+        <span class="label">Commodities</span>
+        <span class="hint">Gold, Silver, Oil</span>
+      </button>
+    </div>
+
+    <button type="button" class="btn" id="logout-btn">Logout</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    (function () {
+      var userName = sessionStorage.getItem("currentUser");
+
+      // Only logged-in users can pick a topic.
+      if (!userName) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      var trackKey = "track-" + userName;
+      var saved = null;
+
+      try {
+        saved = JSON.parse(localStorage.getItem(trackKey));
+      } catch (error) {
+        saved = null;
+      }
+
+      document.querySelectorAll(".icon-choice").forEach(function (button) {
+        var track = button.getAttribute("data-track");
+
+        if (track === saved) {
+          button.classList.add("current");
+        }
+
+        button.addEventListener("click", function () {
+          try {
+            localStorage.setItem(trackKey, JSON.stringify(track));
+          } catch (error) {
+            // Storage blocked: still continue, home will send you back here.
+          }
+          window.location.href = "home.html";
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

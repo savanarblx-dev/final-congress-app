@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badges - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+  <div id="phone">
+    <h1>Badges</h1>
+    <p id="tagline">Earn them by learning and practicing</p>
+    <p id="badge-count" class="small-text"></p>
+
+    <div id="badge-list"></div>
+
+    <p class="small-text"><a href="home.html">Back to lessons</a></p>
+  </div>
+
+  <script src="lessons.js"></script>
+  <script src="learn.js"></script>
+  <script>
+    (function () {
+      var list = document.getElementById("badge-list");
+      if (!list) { return; }
+
+      var ICONS = {
+        "\uD83C\uDF31": "sprout.png",
+        "\uD83E\uDDEA": "tube.png"
+      };
+
+      function makeImage(emoji) {
+        var img = document.createElement("img");
+        img.src = ICONS[emoji];
+        img.alt = "";
+        img.className = "badge-icon";
+        return img;
+      }
+
+      function swapEmoji() {
+        var walker = document.createTreeWalker(list, NodeFilter.SHOW_TEXT);
+        var nodes = [];
+        while (walker.nextNode()) {
+          nodes.push(walker.currentNode);
+        }
+
+        nodes.forEach(function (node) {
+          var parts = node.nodeValue.split(/(\uD83C\uDF31|\uD83E\uDDEA)/);
+          if (parts.length === 1) { return; }
+
+          var fragment = document.createDocumentFragment();
+          parts.forEach(function (part) {
+            if (part === "") { return; }
+            if (ICONS[part]) {
+              fragment.appendChild(makeImage(part));
+            } else {
+              fragment.appendChild(document.createTextNode(part));
+            }
+          });
+
+          if (node.parentNode) {
+            node.parentNode.replaceChild(fragment, node);
+          }
+        });
+      }
+
+      swapEmoji();
+
+      // Run again if learn.js redraws the list later (for example after a badge unlocks).
+      if (typeof MutationObserver !== "undefined") {
+        new MutationObserver(swapEmoji).observe(list, { childList: true, subtree: true });
+      }
+    })();
+  </script>
+</body>
+</html>

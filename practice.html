@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="phone">
+    <h1>Practice</h1>
+    <p id="tagline">Invest $10,000 of pretend money</p>
+
+    <div id="summary" class="content">
+      <p>Month: <strong id="sum-month"></strong></p>
+      <p>Cash: <strong id="sum-cash"></strong></p>
+      <p>Invested: <strong id="sum-invested"></strong></p>
+      <p>Total: <strong id="sum-total"></strong></p>
+      <p>Gain / loss: <strong id="sum-gain"></strong></p>
+    </div>
+
+    <div class="content">
+      <label for="quantity" id="quantity-label">Shares per click</label>
+      <input type="number" id="quantity" min="1" max="10000" step="1" value="1" inputmode="numeric">
+    </div>
+
+    <div id="asset-list"></div>
+
+    <p id="message" role="alert"></p>
+
+    <button type="button" class="btn btn-green" id="next-month-btn">Next month</button>
+    <button type="button" class="btn btn-gray" id="reset-btn">Start over</button>
+
+    <p class="small-text" id="practice-note">Every company here is made up. This is practice, not financial advice.</p>
+    <p class="small-text"><a href="home.html">Back to lessons</a></p>
+  </div>
+
+  <script src="lessons.js"></script>
+  <script src="learn.js"></script>
+  <script src="practice.js"></script>
+</body>
+</html>

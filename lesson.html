@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="lesson-page">
+  <div id="phone">
+    <header class="lesson-header">
+      <img src="logo-white.png" alt="MoneyMentor" class="lesson-logo" onerror="this.hidden = true">
+      <div class="lesson-head-row">
+        <img id="lesson-icon" class="lesson-icon" alt="" hidden>
+        <div class="lesson-head-text">
+          <span class="lesson-badge" id="lesson-badge">Lesson</span>
+          <h1 id="lesson-title">Lesson</h1>
+        </div>
+      </div>
+    </header>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <p class="progress-label" id="progress-label">0 of 0 questions answered</p>
+      <div class="progress-track" aria-hidden="true">
+        <div id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p id="lesson-text"></p>
+    </div>
+
+    <form id="quiz" onsubmit="return false"></form>
+    <p id="result" role="status"></p>
+
+    <div class="lesson-actions">
+      <button type="button" class="action-btn" id="check-btn">Check answers</button>
+      <a href="home.html" class="action-btn" id="next-btn" hidden>Next lesson</a>
+      <a href="home.html" class="action-btn back-btn">Back to lessons</a>
+    </div>
+  </div>
+
+  <script src="lessons.js"></script>
+  <script>
+    (function () {
+      var userName = sessionStorage.getItem("currentUser");
+      if (!userName) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Lessons whose image file does not follow the "lesson-<title>.png" pattern.
+      // Example: "what-is-a-stock": "stock.png"
+      var ICON_FILES = {};
+
+      var EMOJI = /[\p{Extended_Pictographic}\uFE0F\u200D]/gu;
+
+      function stripEmoji(value) {
+        return String(value).replace(EMOJI, "").replace(/^\s+/, "");
+      }
+
+      function slugify(value) {
+        return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      }
+
+      var title = document.getElementById("lesson-title");
+      var badge = document.getElementById("lesson-badge");
+      var icon = document.getElementById("lesson-icon");
+      var text = document.getElementById("lesson-text");
+      var quiz = document.getElementById("quiz");
+      var result = document.getElementById("result");
+      var checkBtn = document.getElementById("check-btn");
+      var nextBtn = document.getElementById("next-btn");
+      var progressLabel = document.getElementById("progress-label");
+      var progressFill = document.getElementById("progress-fill");
+
+      var id = parseInt(new URLSearchParams(window.location.search).get("id"), 10);
+      var lesson = null;
+      var allLessons = [];
+      if (typeof LESSONS !== "undefined" && Array.isArray(LESSONS)) {
+        allLessons = LESSONS;
+        lesson = allLessons.find(function (item) { return item.id === id; }) || null;
+      }
+
+      if (!lesson) {
+        title.textContent = "Lesson not found";
+        badge.hidden = true;
+        document.getElementById("progress-wrap").hidden = true;
+        document.getElementById("lesson-text").parentNode.hidden = true;
+        checkBtn.hidden = true;
+        return;
+      }
+
+      // Lessons in the same topic, so we can number them and find the next one.
+      var track = lesson.track || "stocks";
+      var sameTrack = allLessons.filter(function (item) {
+        return (item.track || "stocks") === track;
+      });
+      var position = sameTrack.indexOf(lesson);
+      var nextLesson = sameTrack[position + 1] || null;
+      var topicName = track === "commodities" ? "Commodities" : "Stocks";
+
+      var cleanTitle = stripEmoji(lesson.title);
+
+      badge.textContent = topicName + " · Lesson " + (position + 1) + " of " + sameTrack.length;
+      title.textContent = cleanTitle;
+      document.title = cleanTitle + " - MoneyMentor";
+      text.textContent = lesson.text;
+
+      // Lesson icon: shown only if the image file exists.
+      var slug = slugify(cleanTitle);
+      if (slug) {
+        icon.addEventListener("load", function () { icon.hidden = false; });
+        icon.addEventListener("error", function () { icon.hidden = true; });
+        icon.src = ICON_FILES[slug] || ("lesson-" + slug + ".png");
+      }
+
+      lesson.questions.forEach(function (question, qIndex) {
+        var box = document.createElement("div");
+        box.className = "question";
+
+        var card = document.createElement("div");
+        card.className = "card";
+
+        var num = document.createElement("p");
+        num.className = "question-num";
+        num.textContent = "Question " + (qIndex + 1) + " of " + lesson.questions.length;
+        card.appendChild(num);
+
+        var prompt = document.createElement("p");
+        prompt.className = "question-text";
+        prompt.textContent = question.q;
+        card.appendChild(prompt);
+
+        question.options.forEach(function (option, oIndex) {
+          var label = document.createElement("label");
+          var input = document.createElement("input");
+          input.type = "radio";
+          input.name = "q" + qIndex;
+          input.value = String(oIndex);
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(option));
+          card.appendChild(label);
+        });
+
+        box.appendChild(card);
+        quiz.appendChild(box);
+      });
+
+      function updateProgress() {
+        var answered = 0;
+        lesson.questions.forEach(function (question, qIndex) {
+          if (quiz.querySelector('input[name="q' + qIndex + '"]:checked')) {
+            answered = answered + 1;
+          }
+        });
+        var total = lesson.questions.length;
+        progressLabel.textContent = answered + " of " + total + " questions answered";
+        progressFill.style.width = (total === 0 ? 0 : (answered / total) * 100) + "%";
+      }
+
+      function clearMarks(scope) {
+        var labels = scope.querySelectorAll("label");
+        labels.forEach(function (label) {
+          label.classList.remove("correct", "wrong");
+          var oldMark = label.querySelector(".mark");
+          if (oldMark) { label.removeChild(oldMark); }
+        });
+      }
+
+      function addMark(label, symbol, word) {
+        var mark = document.createElement("span");
+        mark.className = "mark";
+        mark.textContent = symbol + " " + word;
+        label.appendChild(mark);
+      }
+
+      function showResult(message, kind) {
+        result.textContent = message;
+        result.className = "show " + kind;
+      }
+
+      // Highlight the chosen answer and reset old feedback when the student changes it.
+      quiz.addEventListener("change", function (event) {
+        var changed = event.target;
+        if (!changed || changed.type !== "radio") { return; }
+
+        var card = changed.closest(".card");
+        card.querySelectorAll("label").forEach(function (label) {
+          label.classList.remove("selected");
+        });
+        clearMarks(card);
+        changed.closest("label").classList.add("selected");
+
+        result.textContent = "";
+        result.className = "";
+        nextBtn.hidden = true;
+        updateProgress();
+      });
+
+      checkBtn.addEventListener("click", function () {
+        var correct = 0;
+        var unanswered = false;
+
+        lesson.questions.forEach(function (question, qIndex) {
+          var card = quiz.querySelectorAll(".card")[qIndex];
+          clearMarks(card);
+
+          var picked = quiz.querySelector('input[name="q' + qIndex + '"]:checked');
+          if (!picked) {
+            unanswered = true;
+            return;
+          }
+
+          var label = picked.closest("label");
+          if (parseInt(picked.value, 10) === question.answer) {
+            correct = correct + 1;
+            label.classList.add("correct");
+            addMark(label, "✓", "Correct");
+          } else {
+            label.classList.add("wrong");
+            addMark(label, "✗", "Try again");
+          }
+        });
+
+        if (unanswered) {
+          showResult("Please answer every question first.", "info");
+          return;
+        }
+
+        if (correct === lesson.questions.length) {
+          showResult("Perfect! Lesson complete.", "good");
+
+          var key = "progress-" + userName;
+          var done = [];
+          try {
+            done = JSON.parse(localStorage.getItem(key)) || [];
+          } catch (error) {
+            done = [];
+          }
+          if (!Array.isArray(done)) { done = []; }
+          if (done.indexOf(lesson.id) === -1) {
+            done.push(lesson.id);
+            try { localStorage.setItem(key, JSON.stringify(done)); } catch (error) { /* storage blocked */ }
+          }
+
+          if (nextLesson) {
+            nextBtn.href = "lesson.html?id=" + nextLesson.id;
+            nextBtn.textContent = "Next lesson →";
+          } else {
+            nextBtn.href = "home.html";
+            nextBtn.textContent = "All done — back to lessons";
+          }
+          nextBtn.hidden = false;
+        } else {
+          showResult(
+            "You got " + correct + " of " + lesson.questions.length +
+            ". Read the lesson again and fix the red answers.",
+            "bad"
+          );
+        }
+      });
+
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>

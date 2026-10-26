@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="phone">
+    <h1>Login</h1>
+    <p id="tagline">Welcome back!</p>
+
+    <form id="login-form" novalidate>
+      <label for="email">Email</label>
+      <input type="email" id="email" autocomplete="email">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password">
+
+      <p id="message" role="alert"></p>
+
+      <button type="submit" class="btn btn-green">Login</button>
+    </form>
+
+    <p class="small-text">No account yet? <a href="signup.html">Sign up</a></p>
+    <p class="small-text"><a href="index.html">Back to start</a></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

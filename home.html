@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - MoneyMentor</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdnfonts.com" rel="stylesheet">
+
+</head>
+<body>
+  <div id="phone">
+    <h1>Welcome, <span id="welcome-name"></span>!</h1>
+    <p id="tagline">Learn how to invest, one lesson at a time</p>
+    <p id="progress-text" class="small-text"></p>
+
+    <div id="lesson-list"></div>
+
+    <a href="practice.html" class="btn btn-green">Practice</a>
+    <a href="badges.html" class="btn btn-blue">Badges</a>
+    <a href="calculator.html" class="btn btn-blue">Calculator</a>
+    <a href="choose.html" class="btn btn-gray">Change topic</a>
+    <button type="button" class="btn" id="logout-btn">Logout</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="lessons.js"></script>
+  <script>
+    (function () {
+      var userName = sessionStorage.getItem("currentUser");
+
+      // Only logged-in users can see the lessons.
+      if (!userName) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      var list = document.getElementById("lesson-list");
+      var progressText = document.getElementById("progress-text");
+
+      function load(key, fallback) {
+        try {
+          var saved = JSON.parse(localStorage.getItem(key));
+          return saved === null ? fallback : saved;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      // If lessons.js did not load, say so instead of showing nothing.
+      if (typeof LESSONS === "undefined" || !Array.isArray(LESSONS)) {
+        progressText.textContent =
+          "Lessons could not load. Make sure lessons.js is in the same folder as home.html.";
+        return;
+      }
+
+      var track = load("track-" + userName, null);
+      if (track !== "stocks" && track !== "commodities") {
+        window.location.href = "choose.html";
+        return;
+      }
+
+      var names = { stocks: "📈 Stocks", commodities: "🪙 Commodities" };
+      document.getElementById("tagline").textContent = "Your topic: " + names[track];
+
+      var done = load("progress-" + userName, []);
+      if (!Array.isArray(done)) {
+        done = [];
+      }
+
+      // Lessons with no track count as stocks.
+      var lessons = LESSONS.filter(function (lesson) {
+        return (lesson.track || "stocks") === track;
+      });
+
+      if (lessons.length === 0) {
+        progressText.textContent = "No lessons found for this topic. Check that lessons.js is the latest version.";
+        return;
+      }
+
+      var doneCount = 0;
+
+      lessons.forEach(function (lesson, position) {
+        var isDone = done.indexOf(lesson.id) !== -1;
+        if (isDone) {
+          doneCount = doneCount + 1;
+        }
+
+        var link = document.createElement("a");
+        link.href = "lesson.html?id=" + lesson.id;
+        link.className = "lesson-card";
+        link.textContent = (isDone ? "✅ " : "📘 ") + (position + 1) + ". " + lesson.title;
+        list.appendChild(link);
+      });
+
+      progressText.textContent = doneCount + " of " + lessons.length + " lessons done";
+    })();
+  </script>
+</body>
+</html>
