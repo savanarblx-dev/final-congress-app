@@ -7,7 +7,7 @@
     return;
   }
 
-  // Everything is saved in this browser, separately for each name.
+  // Everything is saved in the browser, separately for each name.
   var progressKey = "progress-" + userName;
   var trackKey = "track-" + userName;
 
@@ -47,7 +47,7 @@
     }
   }
 
-  // ---------- Topics ----------
+  // The topics
   function getTrack() {
     var saved = load(trackKey, null);
     return TRACK_IDS.indexOf(saved) === -1 ? null : saved;
@@ -83,7 +83,7 @@
     showMessage: showMessage
   };
 
-  // ---------- Lesson progress ----------
+  // Lesson progress 
   function getDone() {
     var saved = load(progressKey, []);
 
@@ -117,7 +117,7 @@
     return total > 0 && countDoneIn(trackId, done) === total;
   }
 
-  // ---------- Badges ----------
+  // Badges
   function getStats() {
     var done = getDone();
     var trades = 0;
@@ -275,7 +275,7 @@
       countEarnedBadges() + " of " + BADGES.length + " badges";
   }
 
-  // ---------- Lesson screen: text + quiz ----------
+  // Lesson screen: text + quiz
   function setupLesson() {
     var optionsBox = document.getElementById("quiz-options");
     if (!optionsBox) {
@@ -424,7 +424,7 @@
       earnedCount + " of " + BADGES.length + " badges earned";
   }
 
-  // ---------- Calculator screen ----------
+  //  Calculator screen 
   function setupCalculator() {
     var form = document.getElementById("calc-form");
     if (!form) {
