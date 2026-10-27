@@ -67,7 +67,6 @@
 
       swapEmoji();
 
-      // Run again if learn.js redraws the list later (for example after a badge unlocks).
       if (typeof MutationObserver !== "undefined") {
         new MutationObserver(swapEmoji).observe(list, { childList: true, subtree: true });
       }
