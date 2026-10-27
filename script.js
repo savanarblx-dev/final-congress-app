@@ -3,7 +3,7 @@
   var MIN_AGE = 13;
   var MAX_AGE = 120;
 
-  // ---------- Saved accounts ----------
+  // Saved accounts are stored on browser
   function getUsers() {
     try {
       var saved = JSON.parse(localStorage.getItem(USERS_KEY));
@@ -31,7 +31,7 @@
     }
   }
 
-  // ---------- Date helpers ----------
+  // Date helpers(calender)
   function twoDigits(number) {
     return String(number).padStart(2, "0");
   }
@@ -59,7 +59,7 @@
     return { year: year, month: month, day: day };
   }
 
-  // Age in years, counting the birthday only once it has happened this year.
+  // Age in years, counting the birthday only once it has happened this year so that age is accrate
   function getAge(birth) {
     var now = new Date();
     var age = now.getFullYear() - birth.year;
@@ -145,7 +145,7 @@
         return;
       }
 
-      // Progress is saved by name, so every name must be different.
+      // Progress is saved by name, so every name must be different no duplicate sign ups
       var nameTaken = users.some(function (user) {
         return String(user.name).toLowerCase() === name.toLowerCase();
       });
@@ -170,7 +170,7 @@
     });
   }
 
-  // ---------- Login ----------
+  //  Login 
   function setupLogin() {
     var form = document.getElementById("login-form");
     if (!form) {
@@ -202,7 +202,7 @@
     });
   }
 
-  // ---------- Pages after login: welcome name + logout ----------
+  // Pages after login: welcome name + logout
   function setupAccountBar() {
     var nameBox = document.getElementById("welcome-name");
     if (nameBox) {
