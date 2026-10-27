@@ -48,7 +48,7 @@
         }
       }
 
-      // If lessons.js did not load, say so instead of showing nothing.
+      // If lessons.js did not load, says smth so user dont get confused.
       if (typeof LESSONS === "undefined" || !Array.isArray(LESSONS)) {
         progressText.textContent =
           "Lessons could not load. Make sure lessons.js is in the same folder as home.html.";
@@ -69,7 +69,7 @@
         done = [];
       }
 
-      // Lessons with no track count as stocks.
+      // Lessons with no track count as stocks. mainly for me since i kept running multiple lessons.js versions and some lessons had no track.
       var lessons = LESSONS.filter(function (lesson) {
         return (lesson.track || "stocks") === track;
       });
