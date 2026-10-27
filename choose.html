@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Choose a Topic - MoneyMentor</title>
   <link rel="stylesheet" href="style.css">
+  // brought styles here instaead of using style.css because it was easier to edit and test with out hoppen back and forth between files.
   <style>
     .icon-row {
       display: flex;
@@ -91,7 +92,7 @@
     (function () {
       var userName = sessionStorage.getItem("currentUser");
 
-      // Only logged-in users can pick a topic.
+      // Makes sure only logged in users can pick the topic
       if (!userName) {
         window.location.href = "login.html";
         return;
